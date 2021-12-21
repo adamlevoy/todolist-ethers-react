@@ -1,14 +1,15 @@
 import { useConnectWallet } from './hooks/useConnectWallet';
 import TodoList from "./components/TodoList";
 import AddTodo from "./components/AddTodo";
-import { FaSun } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 import { useState, useEffect } from 'react';
 
 import {
   VStack,
   Heading,
   Text,
-  IconButton
+  IconButton,
+  useColorMode
 } from '@chakra-ui/react';
 
 
@@ -28,16 +29,22 @@ function App() {
     setTodos(newTodos);
   }
 
+  const addTodo = (todo) => {
+    setTodos([...todos, todo]);
+  }
+
+  const {colorMode, toggleColorMode} = useColorMode();
+
   return (
     <VStack p={4}>
-      <IconButton aria-label='change color-mode' icon={<FaSun />} isRound='true' size='lg' alignSelf='flex-end' />
+      <IconButton aria-label='change color-mode' icon={colorMode === 'light' ?<FaSun /> : <FaMoon />} isRound='true' size='lg' alignSelf='flex-end' onClick={toggleColorMode}/>
       <Heading as='h1' size='4xl' mb='8' fontWeight='extrabold' bgGradient='linear(to-r, pink.500, pink.300, blue.500)' bgClip='text' >Todo List</Heading>
       <Text>Your Todo List stored on the blockchain!</Text>
       <TodoList
         todos={todos}
         deleteTodo={deleteTodo}
       />
-      <AddTodo />
+      <AddTodo addTodo={addTodo} todos={todos}/>
     </VStack>
   );
 }
