@@ -1,4 +1,4 @@
-import { HStack, VStack, Text, IconButton, StackDivider, Spacer, Badge } from '@chakra-ui/react';
+import { HStack, VStack, Text, IconButton, StackDivider, Spacer, Badge, Box } from '@chakra-ui/react';
 import { FaTrash } from "react-icons/fa";
 import React from 'react'
 
@@ -14,14 +14,14 @@ const TodoList = ({todos, deleteTodo}) => {
 
   return (
     <VStack
+      alignItems='stretch'
       divider={<StackDivider />}
       borderColor='gray.100'
       borderWidth='2px'
-      padding='4'
       borderRadius='lg'
+      padding='4'
       w='100%'
       maxW={{base: '90vw', sm: '80vw', lg: '50vw', xl: '40vw'}}
-      alignItems='stretch'
     >
       {todos.map((todo) => {
         return(
