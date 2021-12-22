@@ -32,17 +32,18 @@ function App() {
   const [ currentAccount, requestAccounts ] = useConnectWallet();
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isDeletingTodo, setIsDeletingTodo] = useState(false);
+  const [isTogglingTodo, setIsTogglingTodo] = useState(false);
   const [myTodoList, setMyTodoList] = useState([]);
 
   const checkIfWalletIsConnected = () => {
     if (currentAccount) {
-      getTodoList();
+      updateTodoList();
     } else {
       alert("Connect your wallet!");
     }
   }
 
-  const getTodoList = async () => {
+  const updateTodoList = async () => {
     if(!ethereum) {
       alert("Get MetaMask!");
       return;
@@ -90,15 +91,17 @@ function App() {
         console.log("Adding Todo ⛏️");
         await addTodoTxn.wait();
         console.log(`Added Todo ✅ HUZZAH! See transaction: https://rinkeby.etherscan.io/tx/${addTodoTxn.hash}`);
-        const todoList = await todoListContract.getTodoListByOwner();
-        const todoListCleaned = todoList.map((todo) => {
-          return {
-            id: todo.id,
-            text: todo.text,
-            completed: todo.completed
-          }
-        });
-        setMyTodoList(todoListCleaned);
+        // update todo list state
+        // const todoList = await todoListContract.getTodoListByOwner();
+        // const todoListCleaned = todoList.map((todo) => {
+        //   return {
+        //     id: todo.id,
+        //     text: todo.text,
+        //     completed: todo.completed
+        //   }
+        // });
+        // setMyTodoList(todoListCleaned);
+        updateTodoList();
         setIsAddingTodo(false);
       } else {
         alert("Please connect to Rinkeby Test Network.");
@@ -106,43 +109,54 @@ function App() {
     } catch (error) {
       console.log(error);
     }
+  }
 
-    const deleteTodo = async (id) => {
-      let currentChainId = await ethereum.request({method: "eth_chainId"});
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const todoListContract = new ethers.Contract(CONTRACT_ADDRESS, TodoListABI.abi, signer);
+  const deleteTodo = async (id) => {
+    let currentChainId = await ethereum.request({method: "eth_chainId"});
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const todoListContract = new ethers.Contract(CONTRACT_ADDRESS, TodoListABI.abi, signer);
 
-      if (ethereum && currentChainId === CHAIN_ID) {
-        const deleteTodoTxn = await todoListContract.deleteTodo();
-        await deleteTodoTxn.wait();
-      }
-
+    if (ethereum && currentChainId === CHAIN_ID) {
+      setIsDeletingTodo(true);
+      console.log("Open sesame ⛽");
+      const deleteTodoTxn = await todoListContract.removeTodo(id);
       console.log("Deleting Todo ⛏️");
+      await deleteTodoTxn.wait();
+      console.log(`Deleted Todo ✅ HUZZAH! See transaction: https://rinkeby.etherscan.io/tx/${deleteTodoTxn.hash}`);
+      // update todo list state
+      updateTodoList();
+      setIsDeletingTodo(false);
+    } else {
+      alert("Please connect to Rinkeby Test Network.")
     }
+  }
 
-    const toggleTodo
+  const toggleTodo = async (id) => {
+    let currentChainId = await ethereum.request({method: "eth_chainId"});
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const todoListContract = new ethers.Contract(CONTRACT_ADDRESS, TodoListABI.abi, signer);
+
+    if (ethereum && currentChainId === CHAIN_ID) {
+      setIsTogglingTodo(true);
+      console.log("Open sesame ⛽");
+      const toggleTodoTxn = await todoListContract.toggleCompleted(id);
+      console.log("Toggling Todo ⛏️");
+      await toggleTodoTxn.wait();
+      console.log(`Toggled Todo ✅ HUZZAH! See transaction: https://rinkeby.etherscan.io/tx/${toggleTodoTxn.hash}`);
+      // update todo list state
+      updateTodoList();
+      setIsTogglingTodo(false);
+    } else {
+      alert("Please connect to Rinkeby Test Network.")
+    }
   }
 
   useEffect(() => {
     checkIfWalletIsConnected();
     //eslint-disable-next-line
   }, [currentAccount]);
-
-  // listen for event
-  // useEffect(() => {
-  //   if (ethereum) {
-  //     const provider = new ethers.providers.Web3Provider(ethereum);
-  //     const signer = provider.getSigner();
-
-  //     const onNewTodo = (id, text, completed) => {
-  //       setMyTodoList(prevState => [...prevState, {id, text, completed}]);
-  //     }
-
-  //     const todoListContract = new ethers.Contract(CONTRACT_ADDRESS, TodoListABI.abi, signer);
-  //     todoListContract.on("AddedTodo", onNewTodo);
-  //   }
-  // });
 
   return (
     <VStack p={4}>
@@ -155,6 +169,9 @@ function App() {
       <TodoList
         todos={myTodoList}
         deleteTodo={deleteTodo}
+        isDeletingTodo={isDeletingTodo}
+        toggleTodo={toggleTodo}
+        isTogglingTodo={isTogglingTodo}
       />
       <AddTodo addTodo={addTodo} isMining={isAddingTodo}/>
     </VStack>

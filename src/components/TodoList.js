@@ -1,8 +1,8 @@
-import { HStack, VStack, Text, IconButton, StackDivider, Spacer, Badge, Box } from '@chakra-ui/react';
-import { FaTrash } from "react-icons/fa";
+import { HStack, VStack, Text, IconButton, StackDivider, Spacer, Badge } from '@chakra-ui/react';
+import { FaTrash, FaCheck } from "react-icons/fa";
 import React from 'react'
 
-const TodoList = ({todos, deleteTodo}) => {
+const TodoList = ({todos, deleteTodo, toggleTodo, isDeletingTodo, isTogglingTodo}) => {
 
   if (!todos.length) {
     return (
@@ -26,13 +26,19 @@ const TodoList = ({todos, deleteTodo}) => {
       {todos.map((todo) => {
         return(
           <HStack key={todo.id}>
-            <Text>{todo.text}</Text>
+            {todo.completed ?
+              <Text as='s'>{todo.text}</Text>
+              :<Text>{todo.text}</Text>
+            }
             <Spacer />
-            <IconButton
-              icon={<FaTrash/>}
-              isRound='true'
-              onClick={() => deleteTodo(todo.id)}
-            />
+            {isTogglingTodo ?
+              <IconButton icon={<FaCheck/>} isRound='true' isLoading />
+              :<IconButton icon={<FaCheck/>} isRound='true' onClick={() => toggleTodo(todo.id)} />
+            }
+            {isDeletingTodo ?
+              <IconButton icon={<FaTrash/>} isRound='true' isLoading/>
+              :<IconButton icon={<FaTrash/>} isRound='true' onClick={() => deleteTodo(todo.id)} />
+            }
           </HStack>
         )
       })}
