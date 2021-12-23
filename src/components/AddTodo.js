@@ -1,6 +1,5 @@
 import { Button, HStack, Input, useToast } from '@chakra-ui/react';
 import React, {useState} from 'react';
-import { nanoid } from 'nanoid';
 
 const AddTodo = ({ addTodo, isMining }) => {
 

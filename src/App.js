@@ -14,7 +14,6 @@ import {
   useColorMode,
   Button,
   HStack,
-  Box,
   Avatar
 } from '@chakra-ui/react';
 
