@@ -1,21 +1,32 @@
 import { useState } from 'react';
+import { ethers } from 'ethers';
 
 export const useConnectWallet = () => {
   const {ethereum} = window;
-  const [currentAccount, setCurrentAccount] = useState(null);
+  const [account, setAccount] = useState({});
 
-  const requestAccounts = async () => {
+  const connectWallet = async () => {
+    if(!ethereum) {
+      alert("Please install MetaMask.");
+      return;
+    }
+
     try {
-      if(!ethereum) {
-        alert("Get MetaMask!");
-      }
-
-      const accounts = await ethereum.request({method: "eth_requestAccounts"});
-      console.log("Connected account:", accounts[0]);
-      setCurrentAccount(accounts[0]);
+      await ethereum.request({method: "eth_requestAccounts"});
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      const ens = await provider.lookupAddress(address);
+      const avatar = await provider.getAvatar(address);
+      console.log("Connected account:", address);
+      setAccount({
+        address,
+        ens,
+        avatar
+      });
     } catch (error) {
       console.log(error);
     }
   }
-  return [currentAccount, requestAccounts];
+  return [account, connectWallet];
 }
