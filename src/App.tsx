@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useConnectWallet } from './hooks/useConnectWallet';
-import TodoList from "./components/TodoList";
+import TodoList from './components/TodoList'
 import AddTodo from "./components/AddTodo";
 import { FaMoon, FaSun } from "react-icons/fa";
 import TodoListABI from './utils/TodoList.json';
@@ -16,9 +16,15 @@ import {
   HStack
 } from '@chakra-ui/react';
 
+type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
 
 function App() {
-  const {ethereum} = window;
+  const {ethereum}: any = window;
   const CONTRACT_ADDRESS = '0x3f831106a2653BC62a245091c1d3D720133f07B2';
   const CHAIN_ID = "0x4";
   const {colorMode, toggleColorMode} = useColorMode();
@@ -29,7 +35,7 @@ function App() {
   //   {id: 3, text: 'build front end'},
   // ];
 
-  const [ currentAccount, requestAccounts ] = useConnectWallet();
+  const [ currentAccount, requestAccounts ]: any = useConnectWallet();
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isDeletingTodo, setIsDeletingTodo] = useState(false);
   const [isTogglingTodo, setIsTogglingTodo] = useState(false);
@@ -57,7 +63,7 @@ function App() {
 
       if(currentChainId === CHAIN_ID) {
         const todoList = await todoListContract.getTodoListByOwner();
-        const todoListCleaned = todoList.map((todo) => {
+        const todoListCleaned = todoList.map((todo: Todo) => {
           return {
             id: todo.id,
             text: todo.text,
@@ -72,7 +78,7 @@ function App() {
     }
   }
 
-  const addTodo = async (todo) => {
+  const addTodo = async (todo: string) => {
     if(!ethereum) {
       alert("Get MetaMask!");
       return;
@@ -91,16 +97,6 @@ function App() {
         console.log("Adding Todo ⛏️");
         await addTodoTxn.wait();
         console.log(`Added Todo ✅ HUZZAH! See transaction: https://rinkeby.etherscan.io/tx/${addTodoTxn.hash}`);
-        // update todo list state
-        // const todoList = await todoListContract.getTodoListByOwner();
-        // const todoListCleaned = todoList.map((todo) => {
-        //   return {
-        //     id: todo.id,
-        //     text: todo.text,
-        //     completed: todo.completed
-        //   }
-        // });
-        // setMyTodoList(todoListCleaned);
         updateTodoList();
         setIsAddingTodo(false);
       } else {
@@ -111,7 +107,7 @@ function App() {
     }
   }
 
-  const deleteTodo = async (id) => {
+  const deleteTodo = async (id: number) => {
     let currentChainId = await ethereum.request({method: "eth_chainId"});
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
@@ -132,7 +128,7 @@ function App() {
     }
   }
 
-  const toggleTodo = async (id) => {
+  const toggleTodo = async (id: number) => {
     let currentChainId = await ethereum.request({method: "eth_chainId"});
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
@@ -162,7 +158,7 @@ function App() {
     <VStack p={4}>
       <HStack alignSelf='flex-end'>
         {currentAccount ? <Button isDisabled colorScheme='green'>Connected</Button> : <Button onClick={requestAccounts}>Connect Wallet</Button>}
-        <IconButton aria-label='change color-mode' icon={colorMode === 'light' ?<FaSun /> : <FaMoon />} isRound='true' size='lg' alignSelf='flex-end' onClick={toggleColorMode}/>
+        <IconButton aria-label='change color-mode' icon={colorMode === 'light' ?<FaSun /> : <FaMoon />} isRound={true} size='lg' alignSelf='flex-end' onClick={toggleColorMode}/>
       </HStack>
       <Heading as='h1' size='4xl' mb='8' fontWeight='extrabold' bgGradient='linear(to-r, pink.500, pink.300, blue.500)' bgClip='text' >Todo Chain</Heading>
       <Text fontSize='2xl'>Your web3 enabled Todo app!</Text>

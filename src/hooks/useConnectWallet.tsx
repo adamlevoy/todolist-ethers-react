@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
+
 export const useConnectWallet = () => {
-  const {ethereum} = window;
+  const {ethereum}: any = window;
   const [currentAccount, setCurrentAccount] = useState(null);
 
   const requestAccounts = async () => {

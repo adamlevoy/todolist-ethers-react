@@ -1,12 +1,16 @@
 import { Button, HStack, Input, useToast } from '@chakra-ui/react';
 import React, {useState} from 'react';
-import { nanoid } from 'nanoid';
 
-const AddTodo = ({ addTodo, isMining }) => {
+type Props = {
+  addTodo: (text: string) => void;
+  isMining: boolean;
+}
+
+const AddTodo = ({ addTodo, isMining }: Props) => {
 
   const toast = useToast();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!text) {
       toast({

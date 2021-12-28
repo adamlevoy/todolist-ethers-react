@@ -1,8 +1,22 @@
 import { HStack, VStack, Text, IconButton, StackDivider, Spacer, Badge } from '@chakra-ui/react';
 import { FaTrash, FaCheck } from "react-icons/fa";
-import React from 'react'
+import React from 'react';
 
-const TodoList = ({todos, deleteTodo, toggleTodo, isDeletingTodo, isTogglingTodo}) => {
+type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
+type Props = {
+  todos: Todo[];
+  deleteTodo: (id: number) => void;
+  toggleTodo: (id: number) => void;
+  isDeletingTodo: boolean;
+  isTogglingTodo: boolean;
+  }
+
+const TodoList = ({todos, deleteTodo, toggleTodo, isDeletingTodo, isTogglingTodo}: Props) => {
 
   if (!todos.length) {
     return (
@@ -23,7 +37,7 @@ const TodoList = ({todos, deleteTodo, toggleTodo, isDeletingTodo, isTogglingTodo
       w='100%'
       maxW={{base: '90vw', sm: '80vw', lg: '50vw', xl: '40vw'}}
     >
-      {todos.map((todo) => {
+      {todos.map((todo: Todo) => {
         return(
           <HStack key={todo.id}>
             {todo.completed ?
@@ -32,12 +46,12 @@ const TodoList = ({todos, deleteTodo, toggleTodo, isDeletingTodo, isTogglingTodo
             }
             <Spacer />
             {isTogglingTodo ?
-              <IconButton icon={<FaCheck/>} isRound='true' isLoading />
-              :<IconButton icon={<FaCheck/>} isRound='true' onClick={() => toggleTodo(todo.id)} />
+              <IconButton aria-label='complete todo button loading' icon={<FaCheck/>} isRound={true} isLoading />
+              :<IconButton aria-label='complete todo button' icon={<FaCheck/>} isRound={true} onClick={() => toggleTodo(todo.id)} />
             }
             {isDeletingTodo ?
-              <IconButton icon={<FaTrash/>} isRound='true' isLoading/>
-              :<IconButton icon={<FaTrash/>} isRound='true' onClick={() => deleteTodo(todo.id)} />
+              <IconButton aria-label='delete button loading' icon={<FaTrash/>} isRound={true} isLoading/>
+              :<IconButton aria-label='delete button' icon={<FaTrash/>} isRound={true} onClick={() => deleteTodo(todo.id)} />
             }
           </HStack>
         )
