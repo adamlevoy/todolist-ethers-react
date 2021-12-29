@@ -23,6 +23,7 @@ type Todo = {
   completed: boolean;
 }
 
+// testing
 
 function App() {
   const {ethereum}: any = window;
