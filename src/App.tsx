@@ -13,7 +13,8 @@ import {
   IconButton,
   useColorMode,
   Button,
-  HStack
+  HStack,
+  Avatar
 } from '@chakra-ui/react';
 
 type Todo = {
@@ -35,14 +36,18 @@ function App() {
   //   {id: 3, text: 'build front end'},
   // ];
 
+<<<<<<< HEAD:src/App.tsx
   const [ currentAccount, requestAccounts ]: any = useConnectWallet();
+=======
+  const [ account, connectWallet ] = useConnectWallet();
+>>>>>>> df0413023ee468a95ac16f6bb9718532dc154c03:src/App.js
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isDeletingTodo, setIsDeletingTodo] = useState(false);
   const [isTogglingTodo, setIsTogglingTodo] = useState(false);
   const [myTodoList, setMyTodoList] = useState([]);
 
   const checkIfWalletIsConnected = () => {
-    if (currentAccount) {
+    if (account) {
       updateTodoList();
     } else {
       alert("Connect your wallet!");
@@ -149,16 +154,32 @@ function App() {
     }
   }
 
+  const shortenAddress = (address) => {
+    return `${address.slice(0,4)}...${address.slice(
+      address.length - 4,
+      address.length)}`
+  }
+
   useEffect(() => {
     checkIfWalletIsConnected();
     //eslint-disable-next-line
-  }, [currentAccount]);
+  }, [account]);
 
   return (
     <VStack p={4}>
       <HStack alignSelf='flex-end'>
+<<<<<<< HEAD:src/App.tsx
         {currentAccount ? <Button isDisabled colorScheme='green'>Connected</Button> : <Button onClick={requestAccounts}>Connect Wallet</Button>}
         <IconButton aria-label='change color-mode' icon={colorMode === 'light' ?<FaSun /> : <FaMoon />} isRound={true} size='lg' alignSelf='flex-end' onClick={toggleColorMode}/>
+=======
+        {account.address ? (
+          <HStack border='2px' borderRadius='10' borderColor='gray.400' p='1.5'>
+            <Avatar src={account.avatar} size='sm'/>
+            <Text>{account.ens ? account.ens : shortenAddress(account.address)}</Text>
+          </HStack>)
+          : (<Button onClick={connectWallet}>Connect Wallet</Button>)}
+        <IconButton aria-label='change color-mode' icon={colorMode === 'light' ?<FaSun /> : <FaMoon />} isRound='true' size='lg' alignSelf='flex-end' onClick={toggleColorMode}/>
+>>>>>>> df0413023ee468a95ac16f6bb9718532dc154c03:src/App.js
       </HStack>
       <Heading as='h1' size='4xl' mb='8' fontWeight='extrabold' bgGradient='linear(to-r, pink.500, pink.300, blue.500)' bgClip='text' >Todo Chain</Heading>
       <Text fontSize='2xl'>Your web3 enabled Todo app!</Text>
